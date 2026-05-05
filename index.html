@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Minecraft 指令小工具</title>
+  <title>Minecraft Command Helper</title>
   <style>
     :root {
       --bg: #f7fbf2;
@@ -159,6 +159,21 @@
       touch-action: manipulation;
     }
 
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .copy-button.clear {
+      background: #d94f3f;
+      box-shadow: 0 10px 0 #a93c30;
+    }
+
+    .copy-button.clear:active {
+      box-shadow: 0 4px 0 #a93c30;
+    }
+
     .copy-button:active {
       transform: translateY(6px);
       box-shadow: 0 4px 0 var(--green-dark);
@@ -213,7 +228,8 @@
       }
 
       .type-grid,
-      .form-grid {
+      .form-grid,
+      .actions {
         grid-template-columns: 1fr;
       }
 
@@ -230,41 +246,41 @@
 <body>
   <main>
     <header class="title">
-      <h1>Minecraft 指令小工具</h1>
-      <p class="subtitle">選一選，按複製，再到 Minecraft 貼上</p>
+      <h1>Minecraft Command Helper</h1>
+      <p class="subtitle">Pick a shape, copy the command, then paste it in Minecraft</p>
     </header>
 
-    <section class="tool" aria-label="Minecraft Bedrock 指令產生器">
+    <section class="tool" aria-label="Minecraft Bedrock command generator">
       <div class="section">
-        <span class="label">1. 要蓋什麼？</span>
+        <span class="label">1. What do you want to build?</span>
         <div class="type-grid">
           <label class="type-option">
             <input type="radio" name="buildType" value="platform" checked>
-            <span class="type-card">平台</span>
+            <span class="type-card">Platform</span>
           </label>
           <label class="type-option">
             <input type="radio" name="buildType" value="house">
-            <span class="type-card">空心房子</span>
+            <span class="type-card">Hollow House</span>
           </label>
         </div>
       </div>
 
       <div class="section form-grid">
         <div class="field full">
-          <label class="label" for="material">2. 材質</label>
+          <label class="label" for="material">2. Block</label>
           <select id="material">
-            <option value="acacia_planks">相思木材 acacia_planks</option>
-            <option value="oak_planks">橡木木材 oak_planks</option>
-            <option value="stone_bricks">石磚 stone_bricks</option>
-            <option value="iron_block">鐵方塊 iron_block</option>
-            <option value="diamond_block">鑽石方塊 diamond_block</option>
-            <option value="glass">玻璃 glass</option>
-            <option value="grass_block">草地 grass_block</option>
+            <option value="acacia_planks">Acacia Planks acacia_planks</option>
+            <option value="oak_planks">Oak Planks oak_planks</option>
+            <option value="stone_bricks">Stone Bricks stone_bricks</option>
+            <option value="iron_block">Iron Block iron_block</option>
+            <option value="diamond_block">Diamond Block diamond_block</option>
+            <option value="glass">Glass glass</option>
+            <option value="grass_block">Grass Block grass_block</option>
           </select>
         </div>
 
         <div class="field">
-          <label class="label" for="length">3. 長度</label>
+          <label class="label" for="length">3. Length</label>
           <select id="length">
             <option value="5">5</option>
             <option value="10" selected>10</option>
@@ -275,7 +291,7 @@
         </div>
 
         <div class="field">
-          <label class="label" for="width">4. 寬度</label>
+          <label class="label" for="width">4. Width</label>
           <select id="width">
             <option value="5">5</option>
             <option value="10" selected>10</option>
@@ -286,7 +302,7 @@
         </div>
 
         <div class="field" id="heightField">
-          <label class="label" for="height">5. 高度</label>
+          <label class="label" for="height">5. Height</label>
           <select id="height">
             <option value="5" selected>5</option>
             <option value="10">10</option>
@@ -297,15 +313,23 @@
         </div>
       </div>
 
-      <button class="copy-button" id="copyButton" type="button">複製指令</button>
+      <div class="actions">
+        <button class="copy-button" id="copyButton" type="button">Copy Build Command</button>
+        <button class="copy-button clear" id="clearButton" type="button">Copy Clear Command</button>
+      </div>
       <p class="status" id="status" role="status" aria-live="polite"></p>
 
       <div class="command-box">
-        <p class="command-title">目前產生的指令</p>
+        <p class="command-title">Build Command</p>
         <p class="command" id="commandText"></p>
       </div>
 
-      <p class="hint">平台會出現在腳下；空心房子會從腳邊開始往上蓋。</p>
+      <div class="command-box">
+        <p class="command-title">Clear Command</p>
+        <p class="command" id="clearCommandText"></p>
+      </div>
+
+      <p class="hint">Platforms appear under your feet. Houses start at your feet and build upward.</p>
     </section>
   </main>
 
@@ -325,7 +349,9 @@
     const heightSelect = document.getElementById("height");
     const heightField = document.getElementById("heightField");
     const commandText = document.getElementById("commandText");
+    const clearCommandText = document.getElementById("clearCommandText");
     const copyButton = document.getElementById("copyButton");
+    const clearButton = document.getElementById("clearButton");
     const statusText = document.getElementById("status");
 
     function getBuildType() {
@@ -350,16 +376,27 @@
       return `/fill ${x1} ~ ${z1} ${x2} ${heightToCoordinate(heightSelect.value)} ${z2} ${material} hollow`;
     }
 
+    function makeClearCommand() {
+      const buildType = getBuildType();
+      const [x1, x2] = ranges[lengthSelect.value];
+      const [z1, z2] = ranges[widthSelect.value];
+
+      if (buildType === "platform") {
+        return `/fill ${x1} ~-1 ${z1} ${x2} ~-1 ${z2} air`;
+      }
+
+      return `/fill ${x1} ~ ${z1} ${x2} ${heightToCoordinate(heightSelect.value)} ${z2} air`;
+    }
+
     function updateCommand() {
       const isHouse = getBuildType() === "house";
       heightField.style.display = isHouse ? "block" : "none";
       commandText.textContent = makeCommand();
+      clearCommandText.textContent = makeClearCommand();
       statusText.textContent = "";
     }
 
-    async function copyCommand() {
-      const command = makeCommand();
-
+    async function copyText(command) {
       try {
         await navigator.clipboard.writeText(command);
       } catch (error) {
@@ -373,8 +410,16 @@
         document.execCommand("copy");
         document.body.removeChild(temporaryInput);
       }
+    }
 
-      statusText.textContent = "已複製，可以到 Minecraft 貼上";
+    async function copyCommand() {
+      await copyText(makeCommand());
+      statusText.textContent = "Copied. You can paste it in Minecraft.";
+    }
+
+    async function copyClearCommand() {
+      await copyText(makeClearCommand());
+      statusText.textContent = "Clear command copied. Paste it in Minecraft to remove that area.";
     }
 
     buildTypeInputs.forEach((input) => input.addEventListener("change", updateCommand));
@@ -382,6 +427,7 @@
       select.addEventListener("change", updateCommand);
     });
     copyButton.addEventListener("click", copyCommand);
+    clearButton.addEventListener("click", copyClearCommand);
 
     updateCommand();
   </script>

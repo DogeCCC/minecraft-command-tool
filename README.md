@@ -1,13 +1,14 @@
-# Minecraft Bedrock 指令產生器
+# Minecraft Bedrock Command Helper
 
-給小朋友和家長使用的單檔網頁工具，可以產生 Minecraft Bedrock `/fill` 指令。
+A simple one-file web tool for kids and parents. It creates Minecraft Bedrock `/fill` commands that can be copied and pasted into the game.
 
-功能：
+Features:
 
-- 平台
-- 空心房子
-- 材質選擇
-- 長度、寬度、高度選擇
-- 一鍵複製指令
+- Platform command
+- Hollow house command
+- Block selection
+- Length, width, and height selection
+- Copy build command
+- Copy clear command
 
-直接打開 `index.html` 即可使用。
+Open `index.html` or visit the GitHub Pages site to use it.
