@@ -57,6 +57,35 @@
       font-weight: 700;
     }
 
+    .language-switch {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 6px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .language-button {
+      min-width: 96px;
+      min-height: 48px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 1.05rem;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .language-button.active {
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
     .tool {
       background: var(--panel);
       border: 2px solid var(--line);
@@ -80,6 +109,29 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .quick-button {
+      min-height: 72px;
+      border: 3px solid var(--line);
+      border-radius: 8px;
+      background: #fffaf0;
+      color: var(--ink);
+      font: inherit;
+      font-size: clamp(1.05rem, 3.2vw, 1.35rem);
+      font-weight: 950;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .quick-button:active {
+      transform: scale(0.98);
     }
 
     .type-option input {
@@ -161,8 +213,13 @@
 
     .actions {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
+    }
+
+    .copy-button:active {
+      transform: translateY(6px);
+      box-shadow: 0 4px 0 var(--green-dark);
     }
 
     .copy-button.clear {
@@ -170,13 +227,17 @@
       box-shadow: 0 10px 0 #a93c30;
     }
 
+    .copy-button.home {
+      background: var(--blue);
+      box-shadow: 0 10px 0 #245984;
+    }
+
     .copy-button.clear:active {
       box-shadow: 0 4px 0 #a93c30;
     }
 
-    .copy-button:active {
-      transform: translateY(6px);
-      box-shadow: 0 4px 0 var(--green-dark);
+    .copy-button.home:active {
+      box-shadow: 0 4px 0 #245984;
     }
 
     .status {
@@ -228,6 +289,7 @@
       }
 
       .type-grid,
+      .quick-grid,
       .form-grid,
       .actions {
         grid-template-columns: 1fr;
@@ -246,41 +308,56 @@
 <body>
   <main>
     <header class="title">
-      <h1>Minecraft Command Helper</h1>
-      <p class="subtitle">Pick a shape, copy the command, then paste it in Minecraft</p>
+      <h1 data-i18n="title">Minecraft Command Helper</h1>
+      <p class="subtitle" data-i18n="subtitle">Pick a shape, copy the command, then paste it in Minecraft</p>
+      <div class="language-switch" aria-label="Language">
+        <button class="language-button active" id="englishButton" type="button" data-language="en">English</button>
+        <button class="language-button" id="chineseButton" type="button" data-language="zh">中文</button>
+      </div>
     </header>
 
     <section class="tool" aria-label="Minecraft Bedrock command generator">
       <div class="section">
-        <span class="label">1. What do you want to build?</span>
+        <span class="label" data-i18n="quickPicks">Quick Picks</span>
+        <div class="quick-grid">
+          <button class="quick-button" type="button" data-preset="smallWoodHouse" data-i18n="smallWoodHouse">Small Wood House 10x10x5</button>
+          <button class="quick-button" type="button" data-preset="bigWoodHouse" data-i18n="bigWoodHouse">Big Wood House 20x20x10</button>
+          <button class="quick-button" type="button" data-preset="glassHouse" data-i18n="glassHouse">Glass House 15x15x10</button>
+          <button class="quick-button" type="button" data-preset="diamondPlatform" data-i18n="diamondPlatform">Diamond Platform 10x10</button>
+          <button class="quick-button" type="button" data-preset="castleBase" data-i18n="castleBase">Castle Base 25x25</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <span class="label" data-i18n="buildQuestion">1. What do you want to build?</span>
         <div class="type-grid">
           <label class="type-option">
             <input type="radio" name="buildType" value="platform" checked>
-            <span class="type-card">Platform</span>
+            <span class="type-card" data-i18n="platform">Platform</span>
           </label>
           <label class="type-option">
             <input type="radio" name="buildType" value="house">
-            <span class="type-card">Hollow House</span>
+            <span class="type-card" data-i18n="hollowHouse">Hollow House</span>
           </label>
         </div>
       </div>
 
       <div class="section form-grid">
         <div class="field full">
-          <label class="label" for="material">2. Block</label>
+          <label class="label" for="material" data-i18n="blockLabel">2. Block</label>
           <select id="material">
-            <option value="acacia_planks">Acacia Planks acacia_planks</option>
-            <option value="oak_planks">Oak Planks oak_planks</option>
-            <option value="stone_bricks">Stone Bricks stone_bricks</option>
-            <option value="iron_block">Iron Block iron_block</option>
-            <option value="diamond_block">Diamond Block diamond_block</option>
-            <option value="glass">Glass glass</option>
-            <option value="grass_block">Grass Block grass_block</option>
+            <option value="acacia_planks" data-i18n="acacia">Acacia Planks acacia_planks</option>
+            <option value="oak_planks" data-i18n="oak">Oak Planks oak_planks</option>
+            <option value="stone_bricks" data-i18n="stoneBricks">Stone Bricks stone_bricks</option>
+            <option value="iron_block" data-i18n="iron">Iron Block iron_block</option>
+            <option value="diamond_block" data-i18n="diamond">Diamond Block diamond_block</option>
+            <option value="glass" data-i18n="glass">Glass glass</option>
+            <option value="grass_block" data-i18n="grass">Grass Block grass_block</option>
           </select>
         </div>
 
         <div class="field">
-          <label class="label" for="length">3. Length</label>
+          <label class="label" for="length" data-i18n="lengthLabel">3. Length</label>
           <select id="length">
             <option value="5">5</option>
             <option value="10" selected>10</option>
@@ -291,7 +368,7 @@
         </div>
 
         <div class="field">
-          <label class="label" for="width">4. Width</label>
+          <label class="label" for="width" data-i18n="widthLabel">4. Width</label>
           <select id="width">
             <option value="5">5</option>
             <option value="10" selected>10</option>
@@ -302,7 +379,7 @@
         </div>
 
         <div class="field" id="heightField">
-          <label class="label" for="height">5. Height</label>
+          <label class="label" for="height" data-i18n="heightLabel">5. Height</label>
           <select id="height">
             <option value="5" selected>5</option>
             <option value="10">10</option>
@@ -314,22 +391,28 @@
       </div>
 
       <div class="actions">
-        <button class="copy-button" id="copyButton" type="button">Copy Build Command</button>
-        <button class="copy-button clear" id="clearButton" type="button">Copy Clear Command</button>
+        <button class="copy-button" id="copyButton" type="button" data-i18n="copyBuild">Copy Build Command</button>
+        <button class="copy-button clear" id="clearButton" type="button" data-i18n="copyClear">Copy Clear Command</button>
+        <button class="copy-button home" id="homeButton" type="button" data-i18n="copyHome">Copy Home Command</button>
       </div>
       <p class="status" id="status" role="status" aria-live="polite"></p>
 
       <div class="command-box">
-        <p class="command-title">Build Command</p>
+        <p class="command-title" data-i18n="buildCommandTitle">Build Command</p>
         <p class="command" id="commandText"></p>
       </div>
 
       <div class="command-box">
-        <p class="command-title">Clear Command</p>
+        <p class="command-title" data-i18n="clearCommandTitle">Clear Command</p>
         <p class="command" id="clearCommandText"></p>
       </div>
 
-      <p class="hint">Platforms appear under your feet. Houses start at your feet and build upward.</p>
+      <div class="command-box">
+        <p class="command-title" data-i18n="homeCommandTitle">Home Command</p>
+        <p class="command" id="homeCommandText"></p>
+      </div>
+
+      <p class="hint" data-i18n="hint">Platforms appear under your feet. Houses start at your feet and build upward.</p>
     </section>
   </main>
 
@@ -350,12 +433,147 @@
     const heightField = document.getElementById("heightField");
     const commandText = document.getElementById("commandText");
     const clearCommandText = document.getElementById("clearCommandText");
+    const homeCommandText = document.getElementById("homeCommandText");
     const copyButton = document.getElementById("copyButton");
     const clearButton = document.getElementById("clearButton");
+    const homeButton = document.getElementById("homeButton");
     const statusText = document.getElementById("status");
+    const homeCommand = "/tp @s -84 66 309";
+    let currentLanguage = "en";
+
+    const text = {
+      en: {
+        pageTitle: "Minecraft Command Helper",
+        title: "Minecraft Command Helper",
+        subtitle: "Pick a shape, copy the command, then paste it in Minecraft",
+        quickPicks: "Quick Picks",
+        smallWoodHouse: "Small Wood House 10x10x5",
+        bigWoodHouse: "Big Wood House 20x20x10",
+        glassHouse: "Glass House 15x15x10",
+        diamondPlatform: "Diamond Platform 10x10",
+        castleBase: "Castle Base 25x25",
+        buildQuestion: "1. What do you want to build?",
+        platform: "Platform",
+        hollowHouse: "Hollow House",
+        blockLabel: "2. Block",
+        acacia: "Acacia Planks acacia_planks",
+        oak: "Oak Planks oak_planks",
+        stoneBricks: "Stone Bricks stone_bricks",
+        iron: "Iron Block iron_block",
+        diamond: "Diamond Block diamond_block",
+        glass: "Glass glass",
+        grass: "Grass Block grass_block",
+        lengthLabel: "3. Length",
+        widthLabel: "4. Width",
+        heightLabel: "5. Height",
+        copyBuild: "Copy Build Command",
+        copyClear: "Copy Clear Command",
+        copyHome: "Copy Home Command",
+        buildCommandTitle: "Build Command",
+        clearCommandTitle: "Clear Command",
+        homeCommandTitle: "Home Command",
+        hint: "Platforms appear under your feet. Houses start at your feet and build upward.",
+        copiedBuild: "Copied. You can paste it in Minecraft.",
+        copiedClear: "Clear command copied. Paste it in Minecraft to remove that area.",
+        copiedHome: "Home command copied. Paste it in Minecraft to go home."
+      },
+      zh: {
+        pageTitle: "Minecraft 指令小工具",
+        title: "Minecraft 指令小工具",
+        subtitle: "選一選，按複製，再到 Minecraft 貼上",
+        quickPicks: "快速選項",
+        smallWoodHouse: "小木屋 10x10x5",
+        bigWoodHouse: "大木屋 20x20x10",
+        glassHouse: "玻璃屋 15x15x10",
+        diamondPlatform: "鑽石平台 10x10",
+        castleBase: "城堡地基 25x25",
+        buildQuestion: "1. 要蓋什麼？",
+        platform: "平台",
+        hollowHouse: "空心房子",
+        blockLabel: "2. 材質",
+        acacia: "相思木材 acacia_planks",
+        oak: "橡木木材 oak_planks",
+        stoneBricks: "石磚 stone_bricks",
+        iron: "鐵方塊 iron_block",
+        diamond: "鑽石方塊 diamond_block",
+        glass: "玻璃 glass",
+        grass: "草地 grass_block",
+        lengthLabel: "3. 長度",
+        widthLabel: "4. 寬度",
+        heightLabel: "5. 高度",
+        copyBuild: "複製建造指令",
+        copyClear: "複製清除指令",
+        copyHome: "複製回家指令",
+        buildCommandTitle: "建造指令",
+        clearCommandTitle: "清除指令",
+        homeCommandTitle: "回家指令",
+        hint: "平台會出現在腳下；空心房子會從腳邊開始往上蓋。",
+        copiedBuild: "已複製，可以到 Minecraft 貼上。",
+        copiedClear: "清除指令已複製，貼到 Minecraft 可以清除那個區域。",
+        copiedHome: "回家指令已複製，貼到 Minecraft 就可以回家。"
+      }
+    };
+
+    const presets = {
+      smallWoodHouse: {
+        buildType: "house",
+        material: "oak_planks",
+        length: "10",
+        width: "10",
+        height: "5"
+      },
+      bigWoodHouse: {
+        buildType: "house",
+        material: "oak_planks",
+        length: "20",
+        width: "20",
+        height: "10"
+      },
+      glassHouse: {
+        buildType: "house",
+        material: "glass",
+        length: "15",
+        width: "15",
+        height: "10"
+      },
+      diamondPlatform: {
+        buildType: "platform",
+        material: "diamond_block",
+        length: "10",
+        width: "10",
+        height: "5"
+      },
+      castleBase: {
+        buildType: "platform",
+        material: "stone_bricks",
+        length: "25",
+        width: "25",
+        height: "5"
+      }
+    };
 
     function getBuildType() {
       return document.querySelector('input[name="buildType"]:checked').value;
+    }
+
+    function translate(key) {
+      return text[currentLanguage][key] || text.en[key] || key;
+    }
+
+    function setLanguage(language) {
+      currentLanguage = language;
+      document.documentElement.lang = language === "zh" ? "zh-Hant" : "en";
+      document.title = translate("pageTitle");
+
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        element.textContent = translate(element.dataset.i18n);
+      });
+
+      document.querySelectorAll("[data-language]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.language === language);
+      });
+
+      statusText.textContent = "";
     }
 
     function heightToCoordinate(height) {
@@ -388,11 +606,27 @@
       return `/fill ${x1} ~ ${z1} ${x2} ${heightToCoordinate(heightSelect.value)} ${z2} air`;
     }
 
+    function applyPreset(name) {
+      const preset = presets[name];
+
+      if (!preset) {
+        return;
+      }
+
+      document.querySelector(`input[name="buildType"][value="${preset.buildType}"]`).checked = true;
+      materialSelect.value = preset.material;
+      lengthSelect.value = preset.length;
+      widthSelect.value = preset.width;
+      heightSelect.value = preset.height;
+      updateCommand();
+    }
+
     function updateCommand() {
       const isHouse = getBuildType() === "house";
       heightField.style.display = isHouse ? "block" : "none";
       commandText.textContent = makeCommand();
       clearCommandText.textContent = makeClearCommand();
+      homeCommandText.textContent = homeCommand;
       statusText.textContent = "";
     }
 
@@ -414,21 +648,34 @@
 
     async function copyCommand() {
       await copyText(makeCommand());
-      statusText.textContent = "Copied. You can paste it in Minecraft.";
+      statusText.textContent = translate("copiedBuild");
     }
 
     async function copyClearCommand() {
       await copyText(makeClearCommand());
-      statusText.textContent = "Clear command copied. Paste it in Minecraft to remove that area.";
+      statusText.textContent = translate("copiedClear");
     }
 
+    async function copyHomeCommand() {
+      await copyText(homeCommand);
+      statusText.textContent = translate("copiedHome");
+    }
+
+    document.querySelectorAll("[data-language]").forEach((button) => {
+      button.addEventListener("click", () => setLanguage(button.dataset.language));
+    });
+    document.querySelectorAll("[data-preset]").forEach((button) => {
+      button.addEventListener("click", () => applyPreset(button.dataset.preset));
+    });
     buildTypeInputs.forEach((input) => input.addEventListener("change", updateCommand));
     [materialSelect, lengthSelect, widthSelect, heightSelect].forEach((select) => {
       select.addEventListener("change", updateCommand);
     });
     copyButton.addEventListener("click", copyCommand);
     clearButton.addEventListener("click", copyClearCommand);
+    homeButton.addEventListener("click", copyHomeCommand);
 
+    setLanguage(currentLanguage);
     updateCommand();
   </script>
 </body>
