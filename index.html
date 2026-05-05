@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minecraft 指令小工具</title>
+  <style>
+    :root {
+      --bg: #f7fbf2;
+      --panel: #ffffff;
+      --ink: #243226;
+      --muted: #647064;
+      --green: #3c8f50;
+      --green-dark: #2f7140;
+      --blue: #337ab7;
+      --yellow: #ffd86b;
+      --line: #dce7d7;
+      --shadow: 0 18px 42px rgba(38, 80, 44, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(255, 216, 107, 0.22), transparent 280px),
+        var(--bg);
+    }
+
+    main {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .title {
+      margin: 0 0 18px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 7vw, 4.1rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 3vw, 1.35rem);
+      font-weight: 700;
+    }
+
+    .tool {
+      background: var(--panel);
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: clamp(16px, 4vw, 28px);
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .type-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .type-card {
+      display: flex;
+      min-height: 92px;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf8;
+      color: var(--ink);
+      font-size: clamp(1.35rem, 4vw, 2rem);
+      font-weight: 950;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      user-select: none;
+    }
+
+    .type-card:active {
+      transform: scale(0.98);
+    }
+
+    .type-option input:checked + .type-card {
+      border-color: var(--green);
+      background: #eaffee;
+      box-shadow: inset 0 0 0 4px rgba(60, 143, 80, 0.16);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    select {
+      width: 100%;
+      min-height: 64px;
+      border: 3px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 1.25rem;
+      font-weight: 800;
+      padding: 10px 44px 10px 14px;
+      cursor: pointer;
+    }
+
+    select:focus,
+    button:focus {
+      outline: 4px solid rgba(51, 122, 183, 0.24);
+      outline-offset: 3px;
+    }
+
+    .copy-button {
+      width: 100%;
+      min-height: 82px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--green);
+      color: #fff;
+      font-size: clamp(1.55rem, 5vw, 2.35rem);
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 10px 0 var(--green-dark);
+      touch-action: manipulation;
+    }
+
+    .copy-button:active {
+      transform: translateY(6px);
+      box-shadow: 0 4px 0 var(--green-dark);
+    }
+
+    .status {
+      min-height: 34px;
+      margin: 18px 0 0;
+      color: var(--blue);
+      font-size: 1.25rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .command-box {
+      margin-top: 22px;
+      padding: 16px;
+      border: 3px dashed #a7c79d;
+      border-radius: 8px;
+      background: #fbfff5;
+    }
+
+    .command-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .command {
+      margin: 0;
+      color: #183820;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: clamp(1.15rem, 4vw, 1.75rem);
+      font-weight: 900;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .hint {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      main {
+        padding: 16px 12px 28px;
+      }
+
+      .type-grid,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .type-card {
+        min-height: 78px;
+      }
+
+      select {
+        min-height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="title">
+      <h1>Minecraft 指令小工具</h1>
+      <p class="subtitle">選一選，按複製，再到 Minecraft 貼上</p>
+    </header>
+
+    <section class="tool" aria-label="Minecraft Bedrock 指令產生器">
+      <div class="section">
+        <span class="label">1. 要蓋什麼？</span>
+        <div class="type-grid">
+          <label class="type-option">
+            <input type="radio" name="buildType" value="platform" checked>
+            <span class="type-card">平台</span>
+          </label>
+          <label class="type-option">
+            <input type="radio" name="buildType" value="house">
+            <span class="type-card">空心房子</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="section form-grid">
+        <div class="field full">
+          <label class="label" for="material">2. 材質</label>
+          <select id="material">
+            <option value="acacia_planks">相思木材 acacia_planks</option>
+            <option value="oak_planks">橡木木材 oak_planks</option>
+            <option value="stone_bricks">石磚 stone_bricks</option>
+            <option value="iron_block">鐵方塊 iron_block</option>
+            <option value="diamond_block">鑽石方塊 diamond_block</option>
+            <option value="glass">玻璃 glass</option>
+            <option value="grass_block">草地 grass_block</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label" for="length">3. 長度</label>
+          <select id="length">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label" for="width">4. 寬度</label>
+          <select id="width">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+          </select>
+        </div>
+
+        <div class="field" id="heightField">
+          <label class="label" for="height">5. 高度</label>
+          <select id="height">
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="copy-button" id="copyButton" type="button">複製指令</button>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+
+      <div class="command-box">
+        <p class="command-title">目前產生的指令</p>
+        <p class="command" id="commandText"></p>
+      </div>
+
+      <p class="hint">平台會出現在腳下；空心房子會從腳邊開始往上蓋。</p>
+    </section>
+  </main>
+
+  <script>
+    const ranges = {
+      5: ["~-2", "~2"],
+      10: ["~-5", "~4"],
+      15: ["~-7", "~7"],
+      20: ["~-10", "~9"],
+      25: ["~-12", "~12"]
+    };
+
+    const buildTypeInputs = document.querySelectorAll('input[name="buildType"]');
+    const materialSelect = document.getElementById("material");
+    const lengthSelect = document.getElementById("length");
+    const widthSelect = document.getElementById("width");
+    const heightSelect = document.getElementById("height");
+    const heightField = document.getElementById("heightField");
+    const commandText = document.getElementById("commandText");
+    const copyButton = document.getElementById("copyButton");
+    const statusText = document.getElementById("status");
+
+    function getBuildType() {
+      return document.querySelector('input[name="buildType"]:checked').value;
+    }
+
+    function heightToCoordinate(height) {
+      const top = Number(height) - 1;
+      return top === 0 ? "~" : `~${top}`;
+    }
+
+    function makeCommand() {
+      const buildType = getBuildType();
+      const material = materialSelect.value;
+      const [x1, x2] = ranges[lengthSelect.value];
+      const [z1, z2] = ranges[widthSelect.value];
+
+      if (buildType === "platform") {
+        return `/fill ${x1} ~-1 ${z1} ${x2} ~-1 ${z2} ${material}`;
+      }
+
+      return `/fill ${x1} ~ ${z1} ${x2} ${heightToCoordinate(heightSelect.value)} ${z2} ${material} hollow`;
+    }
+
+    function updateCommand() {
+      const isHouse = getBuildType() === "house";
+      heightField.style.display = isHouse ? "block" : "none";
+      commandText.textContent = makeCommand();
+      statusText.textContent = "";
+    }
+
+    async function copyCommand() {
+      const command = makeCommand();
+
+      try {
+        await navigator.clipboard.writeText(command);
+      } catch (error) {
+        const temporaryInput = document.createElement("textarea");
+        temporaryInput.value = command;
+        temporaryInput.setAttribute("readonly", "");
+        temporaryInput.style.position = "fixed";
+        temporaryInput.style.opacity = "0";
+        document.body.appendChild(temporaryInput);
+        temporaryInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(temporaryInput);
+      }
+
+      statusText.textContent = "已複製，可以到 Minecraft 貼上";
+    }
+
+    buildTypeInputs.forEach((input) => input.addEventListener("change", updateCommand));
+    [materialSelect, lengthSelect, widthSelect, heightSelect].forEach((select) => {
+      select.addEventListener("change", updateCommand);
+    });
+    copyButton.addEventListener("click", copyCommand);
+
+    updateCommand();
+  </script>
+</body>
+</html>
