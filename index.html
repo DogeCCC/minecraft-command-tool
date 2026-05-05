@@ -258,11 +258,16 @@
     }
 
     .block-icon {
-      width: 34px;
-      height: 34px;
+      display: block;
+      width: 46px;
+      height: 46px;
       border: 3px solid rgba(0, 0, 0, 0.2);
       border-radius: 5px;
-      background: var(--block-color, #bbb);
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.16) 25%, transparent 25% 50%, rgba(0, 0, 0, 0.08) 50% 75%, transparent 75%),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.12) 25%, transparent 25% 50%, rgba(0, 0, 0, 0.08) 50% 75%, transparent 75%),
+        var(--block-color, #bbb);
+      background-size: 18px 18px, 18px 18px, auto;
       box-shadow:
         inset 8px 8px 0 rgba(255, 255, 255, 0.22),
         inset -8px -8px 0 rgba(0, 0, 0, 0.16);
