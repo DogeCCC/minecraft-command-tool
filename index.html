@@ -177,6 +177,18 @@
       grid-column: 1 / -1;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     select {
       width: 100%;
       min-height: 64px;
@@ -189,6 +201,71 @@
       font-weight: 800;
       padding: 10px 44px 10px 14px;
       cursor: pointer;
+    }
+
+    .material-groups {
+      display: grid;
+      gap: 16px;
+    }
+
+    .material-group {
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfdf8;
+    }
+
+    .material-group-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      font-weight: 950;
+    }
+
+    .material-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .material-button {
+      display: flex;
+      min-height: 92px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 3px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 950;
+      text-align: center;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .material-button.active {
+      border-color: var(--green);
+      background: #eaffee;
+      box-shadow: inset 0 0 0 4px rgba(60, 143, 80, 0.16);
+    }
+
+    .material-button:active {
+      transform: scale(0.98);
+    }
+
+    .block-icon {
+      width: 34px;
+      height: 34px;
+      border: 3px solid rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      background: var(--block-color, #bbb);
+      box-shadow:
+        inset 8px 8px 0 rgba(255, 255, 255, 0.22),
+        inset -8px -8px 0 rgba(0, 0, 0, 0.16);
     }
 
     select:focus,
@@ -290,6 +367,7 @@
 
       .type-grid,
       .quick-grid,
+      .material-grid,
       .form-grid,
       .actions {
         grid-template-columns: 1fr;
@@ -345,15 +423,63 @@
       <div class="section form-grid">
         <div class="field full">
           <label class="label" for="material" data-i18n="blockLabel">2. Block</label>
-          <select id="material">
-            <option value="acacia_planks" data-i18n="acacia">Acacia Planks acacia_planks</option>
-            <option value="oak_planks" data-i18n="oak">Oak Planks oak_planks</option>
-            <option value="stone_bricks" data-i18n="stoneBricks">Stone Bricks stone_bricks</option>
-            <option value="iron_block" data-i18n="iron">Iron Block iron_block</option>
-            <option value="diamond_block" data-i18n="diamond">Diamond Block diamond_block</option>
-            <option value="glass" data-i18n="glass">Glass glass</option>
-            <option value="grass_block" data-i18n="grass">Grass Block grass_block</option>
+          <select class="sr-only" id="material" aria-label="Selected block">
+            <option value="oak_planks">oak_planks</option>
+            <option value="acacia_planks">acacia_planks</option>
+            <option value="cherry_planks">cherry_planks</option>
+            <option value="dark_oak_planks">dark_oak_planks</option>
+            <option value="stone_bricks">stone_bricks</option>
+            <option value="deepslate_bricks">deepslate_bricks</option>
+            <option value="cobblestone">cobblestone</option>
+            <option value="glass">glass</option>
+            <option value="amethyst_block">amethyst_block</option>
+            <option value="sea_lantern">sea_lantern</option>
+            <option value="glowstone">glowstone</option>
+            <option value="iron_block">iron_block</option>
+            <option value="gold_block">gold_block</option>
+            <option value="diamond_block">diamond_block</option>
+            <option value="emerald_block">emerald_block</option>
           </select>
+          <div class="material-groups" id="materialGroups">
+            <div class="material-group">
+              <p class="material-group-title" data-i18n="woodGroup">Wood</p>
+              <div class="material-grid">
+                <button class="material-button" type="button" data-material="oak_planks" style="--block-color: #b8874f;"><span class="block-icon"></span><span data-i18n="oak">Oak</span></button>
+                <button class="material-button" type="button" data-material="acacia_planks" style="--block-color: #c56532;"><span class="block-icon"></span><span data-i18n="acacia">Acacia</span></button>
+                <button class="material-button" type="button" data-material="cherry_planks" style="--block-color: #f3a8b8;"><span class="block-icon"></span><span data-i18n="cherry">Cherry</span></button>
+                <button class="material-button" type="button" data-material="dark_oak_planks" style="--block-color: #4b2f1c;"><span class="block-icon"></span><span data-i18n="darkOak">Dark Oak</span></button>
+              </div>
+            </div>
+
+            <div class="material-group">
+              <p class="material-group-title" data-i18n="stoneGroup">Stone</p>
+              <div class="material-grid">
+                <button class="material-button" type="button" data-material="stone_bricks" style="--block-color: #858585;"><span class="block-icon"></span><span data-i18n="stoneBricks">Stone Bricks</span></button>
+                <button class="material-button" type="button" data-material="deepslate_bricks" style="--block-color: #3d4044;"><span class="block-icon"></span><span data-i18n="deepslateBricks">Deepslate Bricks</span></button>
+                <button class="material-button" type="button" data-material="cobblestone" style="--block-color: #777777;"><span class="block-icon"></span><span data-i18n="cobblestone">Cobblestone</span></button>
+              </div>
+            </div>
+
+            <div class="material-group">
+              <p class="material-group-title" data-i18n="prettyGroup">Pretty</p>
+              <div class="material-grid">
+                <button class="material-button" type="button" data-material="glass" style="--block-color: #bdefff;"><span class="block-icon"></span><span data-i18n="glass">Glass</span></button>
+                <button class="material-button" type="button" data-material="amethyst_block" style="--block-color: #8c56c6;"><span class="block-icon"></span><span data-i18n="amethyst">Amethyst</span></button>
+                <button class="material-button" type="button" data-material="sea_lantern" style="--block-color: #d7fff6;"><span class="block-icon"></span><span data-i18n="seaLantern">Sea Lantern</span></button>
+                <button class="material-button" type="button" data-material="glowstone" style="--block-color: #f2c35b;"><span class="block-icon"></span><span data-i18n="glowstone">Glowstone</span></button>
+              </div>
+            </div>
+
+            <div class="material-group">
+              <p class="material-group-title" data-i18n="preciousGroup">Precious</p>
+              <div class="material-grid">
+                <button class="material-button" type="button" data-material="iron_block" style="--block-color: #d8d8d8;"><span class="block-icon"></span><span data-i18n="iron">Iron</span></button>
+                <button class="material-button" type="button" data-material="gold_block" style="--block-color: #f4cc35;"><span class="block-icon"></span><span data-i18n="gold">Gold</span></button>
+                <button class="material-button" type="button" data-material="diamond_block" style="--block-color: #5de0df;"><span class="block-icon"></span><span data-i18n="diamond">Diamond</span></button>
+                <button class="material-button" type="button" data-material="emerald_block" style="--block-color: #35c75a;"><span class="block-icon"></span><span data-i18n="emerald">Emerald</span></button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="field">
@@ -456,13 +582,25 @@
         platform: "Platform",
         hollowHouse: "Hollow House",
         blockLabel: "2. Block",
-        acacia: "Acacia Planks acacia_planks",
-        oak: "Oak Planks oak_planks",
-        stoneBricks: "Stone Bricks stone_bricks",
-        iron: "Iron Block iron_block",
-        diamond: "Diamond Block diamond_block",
-        glass: "Glass glass",
-        grass: "Grass Block grass_block",
+        woodGroup: "Wood",
+        stoneGroup: "Stone",
+        prettyGroup: "Pretty",
+        preciousGroup: "Precious",
+        oak: "Oak",
+        acacia: "Acacia",
+        cherry: "Cherry",
+        darkOak: "Dark Oak",
+        stoneBricks: "Stone Bricks",
+        deepslateBricks: "Deepslate Bricks",
+        cobblestone: "Cobblestone",
+        iron: "Iron",
+        gold: "Gold",
+        diamond: "Diamond",
+        emerald: "Emerald",
+        glass: "Glass",
+        amethyst: "Amethyst",
+        seaLantern: "Sea Lantern",
+        glowstone: "Glowstone",
         lengthLabel: "3. Length",
         widthLabel: "4. Width",
         heightLabel: "5. Height",
@@ -491,13 +629,25 @@
         platform: "平台",
         hollowHouse: "空心房子",
         blockLabel: "2. 材質",
-        acacia: "相思木材 acacia_planks",
-        oak: "橡木木材 oak_planks",
-        stoneBricks: "石磚 stone_bricks",
-        iron: "鐵方塊 iron_block",
-        diamond: "鑽石方塊 diamond_block",
-        glass: "玻璃 glass",
-        grass: "草地 grass_block",
+        woodGroup: "木頭",
+        stoneGroup: "石頭",
+        prettyGroup: "漂亮",
+        preciousGroup: "貴重",
+        oak: "橡木",
+        acacia: "相思木",
+        cherry: "櫻花木",
+        darkOak: "深色橡木",
+        stoneBricks: "石磚",
+        deepslateBricks: "深板岩磚",
+        cobblestone: "圓石",
+        iron: "鐵",
+        gold: "金",
+        diamond: "鑽石",
+        emerald: "綠寶石",
+        glass: "玻璃",
+        amethyst: "紫水晶",
+        seaLantern: "海晶燈",
+        glowstone: "螢光石",
         lengthLabel: "3. 長度",
         widthLabel: "4. 寬度",
         heightLabel: "5. 高度",
@@ -606,6 +756,14 @@
       return `/fill ${x1} ~ ${z1} ${x2} ${heightToCoordinate(heightSelect.value)} ${z2} air`;
     }
 
+    function updateMaterialButtons() {
+      document.querySelectorAll("[data-material]").forEach((button) => {
+        const isActive = button.dataset.material === materialSelect.value;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    }
+
     function applyPreset(name) {
       const preset = presets[name];
 
@@ -627,6 +785,7 @@
       commandText.textContent = makeCommand();
       clearCommandText.textContent = makeClearCommand();
       homeCommandText.textContent = homeCommand;
+      updateMaterialButtons();
       statusText.textContent = "";
     }
 
@@ -666,6 +825,12 @@
     });
     document.querySelectorAll("[data-preset]").forEach((button) => {
       button.addEventListener("click", () => applyPreset(button.dataset.preset));
+    });
+    document.querySelectorAll("[data-material]").forEach((button) => {
+      button.addEventListener("click", () => {
+        materialSelect.value = button.dataset.material;
+        updateCommand();
+      });
     });
     buildTypeInputs.forEach((input) => input.addEventListener("change", updateCommand));
     [materialSelect, lengthSelect, widthSelect, heightSelect].forEach((select) => {

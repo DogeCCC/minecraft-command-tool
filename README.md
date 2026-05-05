@@ -6,6 +6,7 @@ Features:
 
 - English and Traditional Chinese interface
 - Quick picks for common builds
+- Grouped block picker with kid-friendly pixel icons
 - Platform command
 - Hollow house command
 - Block selection
